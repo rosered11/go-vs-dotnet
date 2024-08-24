@@ -1,0 +1,4 @@
+namespaceOverride: monitoring
+
+admin.userKey: admin
+admin.passwordKey: devops123

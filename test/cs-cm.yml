@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cs-app-client
+  namespace: default
+data:
+  config.yaml: |
+    url: http://cs-app:8080/10
+    requestIntervalMs: 1000
+    stages:
+    - clients: 10
+      intervalMin: 5
+    

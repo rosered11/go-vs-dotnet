@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cadvisor-test
+  namespace: monitoring
+  labels:
+    app: cadvisor-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cadvisor-test
+  template:
+    metadata:
+      labels:
+        app: cadvisor-test
+    spec:
+      serviceAccountName: cadvisor
+      containers:
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.50.0  # Replace with the desired version
+        ports:
+        - containerPort: 8080
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /rootfs
+          name: rootfs
+          readOnly: true
+        - mountPath: /var/run
+          name: varrun
+          readOnly: true
+        - mountPath: /sys
+          name: sys
+          readOnly: true
+        - mountPath: /var/lib/docker
+          name: varlibdocker
+          readOnly: true
+        - mountPath: /dev/disk
+          name: devdisk
+          readOnly: true
+        - mountPath: /var/run/docker.sock
+          name: dockersock
+          readOnly: true
+      automountServiceAccountToken: false
+      volumes:
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: varrun
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: varlibdocker
+        hostPath:
+          path: /var/lib/docker
+      - name: devdisk
+        hostPath:
+          path: /dev/disk
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cadvisor-test
+  namespace: monitoring
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+  selector:
+    app: cadvisor-test
+  type: ClusterIP
