@@ -15,10 +15,17 @@ app.MapMetrics();
 
 // Create endpoint that returns the status of the application.
 // Placeholder for the health check
-app.MapGet("/healthz", () => "OK");
 
-var service = new Factorial();
+app.MapGet("/cpu/{input}", (int input) => { 
+    var service = new Heavy();
+    service.CPUBurn(input);
+    return "Ok"; 
+    });
 
-app.MapGet("/{number}", (int number) => { var service = new Factorial(); var result = service.Calculate(number); return result; });
+app.MapGet("/memory/{input}", (int input) => { 
+    var service = new Heavy(); 
+    service.MemoryBurn(input); 
+    return "Ok";
+     });
 
 app.Run();
